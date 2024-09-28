@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  @apply bg-white dark:bg-gray-950;
+}
+.errortext {
+  @apply text-red-800 text-center text-sm flex items-center justify-center;
+}
+.errortextLG {
+  @apply text-red-800 text-center text-xl flex items-center justify-center;
+}
+.authParagraphContainer {
+  @apply w-full flex items-center justify-center text-xl;
+}
+
+h1 {
+  @apply text-center text-4xl font-extrabold mb-2;
+}
+
+a {
+  @apply text-blue-700;
+  text-decoration: underline;
+  font-weight: bold;
+}

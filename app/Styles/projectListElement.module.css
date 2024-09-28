@@ -1,0 +1,41 @@
+.projectLinkDiv {
+  min-width: 100%;
+  display: flex;
+  padding: 0;
+  gap: 0.2rem;
+}
+.projectLink {
+  background-color: var(--body-bg);
+  color: var(--body-color);
+  width: 100%; /* Full width of the container */
+  padding: 1rem;
+  margin-bottom: 1rem; /* Space between links */
+  text-align: center; /* Center the text inside the link */
+  border-radius: 8px; /* Optional: adds rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: all 200ms;
+  position: relative;
+}
+.projectLinkExtraText {
+  font-size: 0.8rem;
+  font-weight: 300;
+  position: absolute;
+  right: 5%;
+  bottom: 1%;
+  color: var(--primary-color);
+}
+.projectLinkPending {
+  background-color: rgba(245, 222, 179, 0.345);
+  color: black;
+}
+.projectLinkActive {
+  background-color: wheat;
+  color: black;
+}
+
+.projectDeleteBtn {
+  background-color: rgb(180, 1, 1);
+  color: white;
+  margin-top: 0;
+}

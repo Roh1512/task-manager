@@ -1,0 +1,125 @@
+.dashboardContainer {
+  display: flex;
+  min-height: 70vh;
+  width: 100%;
+}
+.dashboardMenuBtn {
+  display: none;
+}
+.projectsContainer {
+  background-color: var(--accent-bg);
+  width: 40vw;
+  overflow: hidden;
+  height: 90vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+.projectLink {
+  background-color: var(--body-bg);
+  color: var(--body-color);
+  width: 100%; /* Full width of the container */
+  padding: 1rem;
+  margin-bottom: 1rem; /* Space between links */
+  text-align: center; /* Center the text inside the link */
+  border-radius: 8px; /* Optional: adds rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: all 200ms;
+  position: relative;
+}
+.projectLinkExtraText {
+  font-size: 0.8rem;
+  font-weight: 300;
+  position: absolute;
+  right: 5%;
+  bottom: 1%;
+  color: var(--primary-color);
+}
+.projectLinkPending {
+  background-color: rgba(245, 222, 179, 0.345);
+  color: black;
+}
+.projectLinkActive {
+  background-color: wheat;
+  color: black;
+}
+.projectsCloseBtn {
+  display: none;
+}
+.createProjectForm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  place-content: center;
+  place-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.createProjectForm button {
+  background-color: green;
+  width: fit-content;
+  height: fit-content;
+  color: black;
+}
+.tasksContainer {
+  width: 100%;
+  min-height: 90vh;
+}
+
+@media only screen and (max-width: 900px) {
+  .projectsContainer {
+    padding: 0;
+    width: 0px;
+    position: relative;
+    z-index: 1;
+  }
+  .closeProjectContainer {
+    animation: closeMenu 300ms ease-in 0ms 1 backwards;
+  }
+  .showProjectContainer {
+    display: flex;
+    animation: showMenu 300ms ease-in 0ms 1 forwards;
+    width: 80vw;
+    padding: 1rem;
+    position: relative;
+  }
+  .dashboardMenuBtn {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+  .tasksContainer {
+    width: 100%;
+    position: absolute;
+  }
+  .projectsCloseBtn {
+    display: block;
+    top: 0;
+    margin-left: 90%;
+    color: rgb(116, 0, 0);
+  }
+}
+
+@keyframes showMenu {
+  0% {
+    width: 0;
+    padding: 0;
+  }
+  100% {
+    width: 80vw;
+    padding: 1rem;
+  }
+}
+@keyframes closeMenu {
+  0% {
+    width: 80vw;
+    padding: 1rem;
+  }
+  100% {
+    width: 0;
+    padding: 0;
+  }
+}
