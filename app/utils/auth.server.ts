@@ -11,25 +11,35 @@ import {
 import { redirect } from "react-router";
 
 export const createUserSession = async (userId: string, redirectTo: string) => {
-  const session = await sessionStorage.getSession();
-  session.set("userId", userId);
-  return redirect(redirectTo, {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
+  try {
+    const session = await sessionStorage.getSession();
+    session.set("userId", userId);
+    return redirect(redirectTo, {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export const login = async (form: LoginForm) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: form.email,
-    },
-  });
-  if (!user || !(await bcrypt.compare(form.password, user.password))) {
-    return json({ error: "Incorrect login" }, { status: 400 });
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: form.email,
+      },
+    });
+    if (!user || !(await bcrypt.compare(form.password, user.password))) {
+      return json({ error: "Incorrect login" }, { status: 400 });
+    }
+    return createUserSession(user.id, "/dashboard");
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-  return createUserSession(user.id, "/dashboard");
 };
 
 function getUserSession(request: Request) {
@@ -49,17 +59,22 @@ export async function requireUserId(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ) {
-  const session = await getUserSession(request);
-  const userId = session.get("userId");
-  if (!userId || typeof userId !== "string") {
-    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
-    throw redirect(`/login?${searchParams}`);
+  try {
+    const session = await getUserSession(request);
+    const userId = session.get("userId");
+    if (!userId || typeof userId !== "string") {
+      const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+      throw redirect(`/login?${searchParams}`);
+    }
+    return userId;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-  return userId;
 }
 
 export async function getUser(request: Request) {
-  const userId = await getUserId(request);
+  const userId = await requireUserId(request);
   if (typeof userId !== "string") {
     return null;
   }
@@ -83,14 +98,14 @@ export async function getUser(request: Request) {
     throw logout(request);
   }
 }
-async function getUserId(request: Request) {
+/* async function getUserId(request: Request) {
   const session = await getUserSession(request);
   const userId = session.get("userId");
   if (!userId || typeof userId !== "string") {
     return null;
   }
   return userId;
-}
+} */
 
 export const isLoggedIn = async (request: Request) => {
   const session = await getUserSession(request);

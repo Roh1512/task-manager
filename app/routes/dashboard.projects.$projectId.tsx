@@ -1,7 +1,9 @@
-import { useLoaderData } from "@remix-run/react";
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData, useNavigation } from "@remix-run/react";
+import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import styles from "../Styles/tasksPage.module.css";
 import { ErrorComponent } from "~/components/ErrorComponent";
+import { isLoggedIn } from "~/utils/auth.server";
+import { PageLoader } from "~/components/PageLoader";
 
 // Dummy tasks data - you should fetch this from your database instead
 /* const tasksData: Record<number, string[]> = {
@@ -11,7 +13,11 @@ import { ErrorComponent } from "~/components/ErrorComponent";
 }; */
 
 // Loader to fetch tasks for a specific project
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const loggedIn = await isLoggedIn(request);
+  if (!loggedIn) {
+    return redirect("/login");
+  }
   const projectId = params.projectId;
 
   /*  // Check if the projectId exists
@@ -24,8 +30,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 export default function ProjectTasks() {
   const { projectId } = useLoaderData<typeof loader>();
-
-  return (
+  const navigation = useNavigation();
+  return navigation.state === "loading" ? (
+    <PageLoader />
+  ) : (
     <div className={styles.tasksPage}>
       <h2>Tasks</h2>
       <p>

@@ -12,6 +12,12 @@
   --spinner2: red;
   --spinner3: #3d5af1;
   --spinner4: transparent;
+  --linkbtn-bg: rgb(183, 176, 172);
+  --linkbtn-color: rgb(7, 7, 7);
+  --linkbtn-bg-active: rgb(7, 79, 0);
+  --linkbtn-color-active: rgb(255, 255, 255);
+  --linkbtn-bg-pending: rgba(183, 176, 172, 0.704);
+  --linkbtn-color-pending: rgba(35, 35, 35, 0.704);
 }
 
 * {
@@ -36,11 +42,17 @@
   --body-bg: rgb(26, 28, 35);
   --body-color: rgb(255, 255, 255);
   --primary-bg: rgb(13, 17, 20);
-  --primary-color: rgb(116, 116, 116);
+  --primary-color: rgb(211, 211, 211);
   --accent-bg: rgb(0, 0, 0);
   --accent-color: white;
   --secondary: blue;
   --spinner1: #29dd0a;
+  --linkbtn-bg: rgb(41, 39, 39);
+  --linkbtn-color: rgb(247, 247, 247);
+  --linkbtn-bg-active: rgb(5, 78, 22);
+  --linkbtn-color-active: rgb(249, 249, 249);
+  --linkbtn-bg-pending: rgba(41, 39, 39, 0.556);
+  --linkbtn-color-pending: rgba(249, 249, 249, 0.507);
   transition: background-color 20ms ease;
 }
 
@@ -54,6 +66,12 @@
   --accent-bg: rgb(217, 216, 205);
   --accent-color: black;
   --secondary: rgb(0, 153, 255);
+  --linkbtn-bg: rgb(183, 176, 172);
+  --linkbtn-color: rgb(7, 7, 7);
+  --linkbtn-bg-active: rgb(7, 79, 0);
+  --linkbtn-color-active: rgb(255, 255, 255);
+  --linkbtn-bg-pending: rgba(183, 176, 172, 0.704);
+  --linkbtn-color-pending: rgba(35, 35, 35, 0.704);
   transition: background-color 20ms ease;
 }
 

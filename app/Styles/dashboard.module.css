@@ -18,8 +18,8 @@
   padding: 1rem;
 }
 .projectLink {
-  background-color: var(--body-bg);
-  color: var(--body-color);
+  background-color: var(--linkbtn-bg);
+  color: var(--linkbtn-color);
   width: 100%; /* Full width of the container */
   padding: 1rem;
   margin-bottom: 1rem; /* Space between links */
@@ -39,12 +39,12 @@
   color: var(--primary-color);
 }
 .projectLinkPending {
-  background-color: rgba(245, 222, 179, 0.345);
-  color: black;
+  background-color: var(--linkbtn-bg-pending);
+  color: var(--linkbtn-color-pending);
 }
 .projectLinkActive {
-  background-color: wheat;
-  color: black;
+  background-color: var(--linkbtn-bg-active);
+  color: var(--linkbtn-color-active);
 }
 .projectsCloseBtn {
   display: none;
@@ -66,7 +66,18 @@
 }
 .tasksContainer {
   width: 100%;
-  min-height: 90vh;
+  display: flex;
+  max-height: 90vh;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+}
+.dashboardTasksDiv {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 @media only screen and (max-width: 900px) {
@@ -94,6 +105,8 @@
   .tasksContainer {
     width: 100%;
     position: absolute;
+    height: 100%;
+    overflow-y: scroll;
   }
   .projectsCloseBtn {
     display: block;

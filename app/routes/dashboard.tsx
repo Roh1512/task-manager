@@ -9,6 +9,7 @@ import styles from "../Styles/dashboard.module.css";
 import { useEffect, useRef, useState } from "react";
 import {
   Form,
+  Link,
   NavLink,
   Outlet,
   useActionData,
@@ -39,9 +40,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   const take = 5;
   const skip = (page - 1) * take;
   const projects = await getProjectsByUser(userId, skip, take);
-  const localTasks = ["Local Task 1", "Local Task 2", "Local Task 3"];
 
-  return { projects, localTasks, page, hasMore: projects.length === take };
+  return { projects, page, hasMore: projects.length === take };
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -86,7 +86,6 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Dashboard() {
   const {
     projects: initialProjects,
-    localTasks,
     page: initialPage,
     hasMore: initialHasMore,
   } = useLoaderData<typeof loader>();
@@ -170,7 +169,11 @@ export default function Dashboard() {
 
   const isDashboardRoute = location.pathname === "/dashboard";
 
-  const projectRoutes = ["/dashboard/projects"]; // Add other project links if necessary
+  const projectRoutes = [
+    "/dashboard/projects",
+    "dashboard/localtasks",
+    "/dashboard",
+  ]; // Add other project links if necessary
 
   const isNavigatingToProject = projectRoutes.some((route) =>
     location.pathname.includes(route)
@@ -214,10 +217,17 @@ export default function Dashboard() {
           </button>
           <NavLink
             preventScrollReset={true}
-            to="/dashboard"
-            className={`${styles.projectLink} ${
-              isDashboardRoute && styles.projectLinkActive
-            }`}
+            to="/dashboard/localtasks"
+            className={({ isActive, isPending }) =>
+              `${styles.projectLink} ${
+                isPending
+                  ? styles.projectLinkPending
+                  : isActive
+                  ? styles.projectLinkActive
+                  : ""
+              }`
+            }
+            onClick={() => setShowProjects(false)}
           >
             Home
           </NavLink>
@@ -276,12 +286,11 @@ export default function Dashboard() {
         <div className={styles.tasksContainer}>
           {isDashboardRoute && (
             <>
-              <h2>Local Tasks</h2>
-              <ul>
-                {localTasks.map((task: string, index: number) => (
-                  <li key={index}>{task}</li>
-                ))}
-              </ul>
+              <div className={styles.dashboardTasksDiv}>
+                <Link to="/dashboard/localtasks" className={styles.projectLink}>
+                  View All Tasks
+                </Link>
+              </div>
             </>
           )}
           <Outlet />
