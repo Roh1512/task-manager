@@ -1,6 +1,10 @@
-# Welcome to Remix!
+# Task Manager App
 
-- 📖 [Remix docs](https://remix.run/docs)
+Build with remix-run
+
+## How to use
+
+Login or sign up and list your tasks and organize them into projects
 
 ## Development
 
