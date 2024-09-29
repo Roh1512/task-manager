@@ -22,7 +22,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Index() {
   const navigate = useNavigate();
   return (
-    <div className="homePage">
+    <div className="mainDIv">
       <div className="hero">
         <div className="heroText">
           <h1>ToDo List</h1>

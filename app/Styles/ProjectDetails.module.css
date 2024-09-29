@@ -1,0 +1,76 @@
+.projectDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  background-color: var(--accent-bg);
+  padding-bottom: 1rem;
+  padding-top: 1.5rem;
+}
+
+.projectDetailsContainer p,
+.projectDetailsContainer h1 {
+  word-wrap: break-word; /* Break long words and wrap */
+  overflow-wrap: break-word; /* Ensure long text wraps within the container */
+  word-break: break-word; /* Ensure that even unbreakable text is broken */
+  width: 100%; /* Ensures the elements take full width and wrap accordingly */
+  text-align: center; /* Optional: Aligns the text to the center */
+}
+
+.inputTitleContainer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.inputTitleContainer > label {
+  text-wrap: nowrap;
+  font-size: 1.5rem;
+}
+.inputTitleContainer > input {
+  padding: 0.2rem;
+}
+.descriptionTextArea {
+  width: 100%;
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  width: 100%;
+  gap: 1rem;
+  position: relative;
+}
+.editBtn {
+  background: transparent;
+  border: 2px solid rgb(152, 69, 2);
+  color: rgb(121, 56, 2);
+  padding: 0.2rem 0.2rem;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cancelBtn {
+  margin-left: 0;
+  background: transparent;
+  border: 2px solid rgb(152, 2, 2);
+  color: rgb(143, 2, 2);
+  padding: 0.2rem;
+  margin-left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.submitBtn {
+  padding: 0.4rem 0.6rem;
+  background-color: rgb(8, 107, 0);
+  color: rgb(255, 255, 255);
+}

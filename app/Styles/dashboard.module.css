@@ -1,6 +1,7 @@
 .dashboardContainer {
   display: flex;
   min-height: 70vh;
+  max-height: 80vh;
   width: 100%;
 }
 .dashboardMenuBtn {
@@ -10,12 +11,17 @@
   background-color: var(--accent-bg);
   width: 40vw;
   overflow: hidden;
-  height: 90vh;
+  height: 80vh;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1rem;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.projectsContainer::-webkit-scrollbar {
+  display: none;
 }
 .projectLink {
   background-color: var(--linkbtn-bg);
@@ -67,10 +73,16 @@
 .tasksContainer {
   width: 100%;
   display: flex;
-  max-height: 90vh;
+  min-height: 80vh;
+  max-height: 80vh;
   flex-direction: column;
   align-items: center;
   overflow-y: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.tasksContainer::-webkit-scrollbar {
+  display: none;
 }
 .dashboardTasksDiv {
   height: 100%;
@@ -78,6 +90,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2rem;
+}
+.dashboardTasksDiv > p {
+  font-size: 2rem;
 }
 
 @media only screen and (max-width: 900px) {
@@ -101,6 +117,9 @@
     display: block;
     padding: 0;
     margin: 0;
+    position: absolute;
+    z-index: 200;
+    background-color: var(--accent-bg);
   }
   .tasksContainer {
     width: 100%;
@@ -111,8 +130,11 @@
   .projectsCloseBtn {
     display: block;
     top: 0;
+    padding: 0;
+    margin: 0;
     margin-left: 90%;
     color: rgb(116, 0, 0);
+    background: transparent;
   }
 }
 

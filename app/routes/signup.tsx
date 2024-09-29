@@ -73,7 +73,7 @@ export default function Signup() {
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div>
+    <div className="mainDiv">
       <BackButton />
       <h1>Sign Up</h1>
       {actionData?.user ? <p>{actionData.user.username}</p> : <>&nbsp;</>}

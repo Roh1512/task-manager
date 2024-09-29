@@ -16,16 +16,17 @@ import {
   useFetcher,
   useLoaderData,
   useLocation,
+  useNavigate,
   useNavigation,
 } from "@remix-run/react";
-import { CreateProjectForm } from "~/utils/types.server";
+import { CreateProjectForm, ProjectType } from "~/utils/types.server";
 import {
   createProject,
   deleteProject,
   getProjectsByUser,
 } from "~/utils/projects.server";
 import { ProjectListElement } from "~/components/ProjectListElement";
-import { Project } from "@prisma/client";
+// import { Project } from "@prisma/client";
 import { ButtonLoader } from "~/components/ButtonLoader";
 import { PageLoader } from "~/components/PageLoader";
 
@@ -89,7 +90,7 @@ export default function Dashboard() {
     page: initialPage,
     hasMore: initialHasMore,
   } = useLoaderData<typeof loader>();
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<ProjectType[]>(initialProjects);
   const [page, setPage] = useState(initialPage);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const fetcher = useFetcher<typeof loader>();
@@ -98,6 +99,7 @@ export default function Dashboard() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const location = useLocation(); // Use useLocation to get the current path
   const navigation = useNavigation();
+  const navigate = useNavigate();
   const loadingCreateProject =
     (navigation.state === "submitting" || navigation.state === "loading") &&
     navigation.formData?.get("_action") === "create_project";
@@ -144,8 +146,9 @@ export default function Dashboard() {
   useEffect(() => {
     if (actionData?.newProject) {
       setProjects((prevProjects) => [actionData.newProject, ...prevProjects]);
+      navigate(`/dashboard/projects/${actionData?.newProject.id}`);
     }
-  }, [actionData]);
+  }, [actionData, navigate]);
 
   const loadMoreProjects = () => {
     fetcher.load(`/dashboard?page=${page + 1}`);
@@ -155,7 +158,7 @@ export default function Dashboard() {
     if (fetcher.data && fetcher.state === "idle") {
       setProjects((prevProjects) => {
         const newProjects = [...prevProjects];
-        fetcher.data.projects.forEach((project: Project) => {
+        fetcher.data.projects.forEach((project: ProjectType) => {
           if (!newProjects.some((p) => p.id === project.id)) {
             newProjects.push(project);
           }
@@ -171,18 +174,19 @@ export default function Dashboard() {
 
   const projectRoutes = [
     "/dashboard/projects",
-    "dashboard/localtasks",
+    "/dashboard/localtasks",
     "/dashboard",
   ]; // Add other project links if necessary
 
   const isNavigatingToProject = projectRoutes.some((route) =>
-    location.pathname.includes(route)
+    location.pathname.startsWith(route)
   );
 
   const loadingPage =
-    !isNavigatingToProject &&
     navigation.state === "loading" &&
-    !navigation.formData;
+    !navigation.formData &&
+    !isNavigatingToProject;
+  console.log("Loading page dashboard: ", loadingPage);
 
   return loadingPage ? (
     <PageLoader />
@@ -261,7 +265,7 @@ export default function Dashboard() {
             </button>
           </Form>
           {projects.length > 0 ? (
-            projects.map((project: Project) => {
+            projects.map((project: ProjectType) => {
               return (
                 <ProjectListElement
                   project={project}
@@ -287,13 +291,18 @@ export default function Dashboard() {
           {isDashboardRoute && (
             <>
               <div className={styles.dashboardTasksDiv}>
-                <Link to="/dashboard/localtasks" className={styles.projectLink}>
+                <p>Manage your day to day tasks on the web.</p>
+                <Link
+                  to="/dashboard/localtasks"
+                  className={styles.projectLink}
+                  style={{ width: "fit-content", fontSize: "2rem" }}
+                >
                   View All Tasks
                 </Link>
               </div>
             </>
           )}
-          <Outlet />
+          <Outlet context={setProjects} />
         </div>
       </div>
     </>

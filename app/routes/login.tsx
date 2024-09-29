@@ -53,7 +53,7 @@ export default function Login() {
 
   const isSubmitting = navigation.state === "submitting";
   return (
-    <div>
+    <div className="mainDiv">
       <BackButton />
       <h1>Login</h1>
       <Form method="post" autoComplete="off" className="authForm">

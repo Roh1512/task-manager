@@ -4,20 +4,21 @@ import {
   useFetcher,
   useLocation,
 } from "@remix-run/react";
-import { Project } from "@prisma/client";
+// import { Project } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import styles from "../Styles/projectListElement.module.css";
 import { ButtonLoader } from "./ButtonLoader";
 import { useEffect } from "react";
 
 import { action as dashboardAction } from "~/routes/dashboard";
+import { ProjectType } from "~/utils/types.server";
 
 export const ProjectListElement = ({
   project,
   setProjects, // Assuming you want to pass setProjects as a prop to manage state
 }: {
-  project: Project;
-  setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
+  project: ProjectType;
+  setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
 }) => {
   const navigate = useNavigate();
   const fetcher = useFetcher<typeof dashboardAction>();
@@ -60,7 +61,9 @@ export const ProjectListElement = ({
           }`
         }
       >
-        {project.title}
+        {project.title.length > 15
+          ? `${project.title.slice(0, 15)}...`
+          : project.title}
         <span className={styles.projectLinkExtraText}>
           {formattedCreatedAtDate}
         </span>

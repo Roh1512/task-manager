@@ -1,3 +1,12 @@
+export interface ProjectType {
+  id: string;
+  title: string;
+  description: string | null;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface SignupForm {
   username: string;
   email: string;

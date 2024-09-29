@@ -80,7 +80,7 @@ export default function Profile() {
   console.log(changePassword);
 
   return (
-    <>
+    <div className="mainDiv">
       {loadingPage ? (
         <PageLoader />
       ) : (
@@ -239,6 +239,6 @@ export default function Profile() {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
