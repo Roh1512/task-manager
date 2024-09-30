@@ -98,17 +98,15 @@
 
 @media only screen and (max-width: 900px) {
   .projectsContainer {
+    display: flex;
     padding: 0;
     width: 0px;
     position: relative;
     z-index: 1;
-  }
-  .closeProjectContainer {
-    animation: closeMenu 300ms ease-in 0ms 1 backwards;
+    transition: width 200ms;
   }
   .showProjectContainer {
     display: flex;
-    animation: showMenu 300ms ease-in 0ms 1 forwards;
     width: 80vw;
     padding: 1rem;
     position: relative;
@@ -135,26 +133,5 @@
     margin-left: 90%;
     color: rgb(116, 0, 0);
     background: transparent;
-  }
-}
-
-@keyframes showMenu {
-  0% {
-    width: 0;
-    padding: 0;
-  }
-  100% {
-    width: 80vw;
-    padding: 1rem;
-  }
-}
-@keyframes closeMenu {
-  0% {
-    width: 80vw;
-    padding: 1rem;
-  }
-  100% {
-    width: 0;
-    padding: 0;
   }
 }

@@ -1,6 +1,6 @@
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import sytles from "../Styles/ProjectDetails.module.css";
+import styles from "../Styles/ProjectDetails.module.css";
 import { ProjectType } from "~/utils/types.server";
 
 interface Project {
@@ -12,7 +12,7 @@ interface Project {
   updatedAt: string;
 }
 interface EditedProject {
-  editedProject: ProjectType;
+  editedProject: ProjectType | undefined;
 }
 export const ProjectDetails = ({
   project,
@@ -24,6 +24,7 @@ export const ProjectDetails = ({
   const fetcher = useFetcher<EditedProject>();
   const [edit, setEdit] = useState<boolean>(false);
   console.log(fetcher.data);
+  const [expand, setExpand] = useState<boolean>(false);
 
   const submitting =
     fetcher.state !== "idle" &&
@@ -36,85 +37,109 @@ export const ProjectDetails = ({
   useEffect(() => {
     if (fetcher.data?.editedProject) {
       setProjects((prevProjects) =>
-        prevProjects.map((proj) => (proj.id === project?.id ? project : proj))
+        prevProjects.map((proj) =>
+          proj.id === project?.id && fetcher.data?.editedProject
+            ? fetcher.data.editedProject
+            : proj
+        )
       );
     }
   }, [fetcher.data?.editedProject, project, setProjects]);
+  console.log("Expand: ", expand);
+
   return (
     <>
-      {edit ? (
-        <>
-          <fetcher.Form
-            method="post"
-            className={sytles.projectDetailsContainer}
-          >
-            <fieldset disabled={submitting || !edit}>
-              <input
-                type="hidden"
-                id="projectId"
-                name="projectId"
-                value={project?.id}
-              />
-              <div className={sytles.inputTitleContainer}>
-                <label htmlFor="title">Project Title: </label>
+      <div
+        className={`${styles.projectDetails}  ${
+          expand ? styles.expand : styles.collapse
+        }`}
+      >
+        {edit ? (
+          <>
+            <fetcher.Form
+              method="post"
+              className={`${styles.projectDetailsContainer}`}
+            >
+              <fieldset disabled={submitting || !edit}>
                 <input
-                  type="text"
-                  name="title"
-                  id="title"
-                  defaultValue={project?.title}
-                  aria-label="Project Title"
+                  type="hidden"
+                  id="projectId"
+                  name="projectId"
+                  value={project?.id}
                 />
-              </div>
-              <textarea
-                name="description"
-                id="description"
-                defaultValue={project?.description || undefined}
-                placeholder="Add a project description"
-                rows={4}
-                disabled={!edit}
-                className={sytles.descriptionTextArea}
-              ></textarea>
-              <div className={sytles.buttons}>
-                <button
-                  className={sytles.cancelBtn}
-                  onClick={() => setEdit(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type={edit ? "submit" : "button"}
-                  name="_action"
-                  id="_action"
-                  value="edit_project"
-                  disabled={submitting || !edit}
-                  className={sytles.submitBtn}
-                >
-                  {submitting ? "Changing..." : "Submit"}
-                </button>
-              </div>
-            </fieldset>
-          </fetcher.Form>
-        </>
-      ) : (
-        <>
-          <div className={sytles.projectDetailsContainer}>
-            <h1 className={sytles.projectTitle}>{project?.title}</h1>
-            {project?.description && <p>{project?.description}</p>}
+                <div className={styles.inputTitleContainer}>
+                  <label htmlFor="title">Project Title: </label>
+                  <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    defaultValue={project?.title}
+                    aria-label="Project Title"
+                  />
+                </div>
+                <textarea
+                  name="description"
+                  id="description"
+                  defaultValue={project?.description || undefined}
+                  placeholder="Add a project description"
+                  rows={4}
+                  disabled={!edit}
+                  className={styles.descriptionTextArea}
+                ></textarea>
+                <div className={styles.buttons}>
+                  <button
+                    className={styles.cancelBtn}
+                    onClick={() => setEdit(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type={edit ? "submit" : "button"}
+                    name="_action"
+                    id="_action"
+                    value="edit_project"
+                    disabled={submitting || !edit}
+                    className={styles.submitBtn}
+                  >
+                    {submitting ? "Changing..." : "Submit"}
+                  </button>
+                </div>
+              </fieldset>
+            </fetcher.Form>
+          </>
+        ) : (
+          <>
+            <div className={styles.projectDetailsContainer}>
+              <h1 className={styles.projectTitle}>{project?.title}</h1>
+              {project?.description && <p>{project?.description}</p>}
+            </div>
+          </>
+        )}
+        {!edit && (
+          <div className={styles.buttons}>
+            <button
+              type="button"
+              onClick={() => setEdit((prev) => !prev)}
+              className={`${styles.editBtn}`}
+              disabled={submitting}
+            >
+              <i className="ri-edit-2-fill"></i>
+            </button>
           </div>
-        </>
-      )}
-      {!edit && (
-        <div className={sytles.buttons}>
-          <button
-            type="button"
-            onClick={() => setEdit((prev) => !prev)}
-            className={sytles.editBtn}
-            disabled={submitting}
-          >
-            <i className="ri-edit-2-fill"></i>
-          </button>
-        </div>
-      )}
+        )}
+      </div>
+      <div className={styles.buttons}>
+        <button
+          onClick={() => setExpand((prev) => !prev)}
+          className={styles.expandBtn}
+        >
+          {expand ? (
+            <i className="ri-arrow-up-wide-line"></i>
+          ) : (
+            <i className="ri-arrow-down-wide-line"></i>
+          )}
+        </button>
+      </div>
     </>
   );
 };

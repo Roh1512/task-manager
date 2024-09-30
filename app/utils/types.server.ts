@@ -49,3 +49,12 @@ export interface CreateProjectForm {
   title: string;
   description?: string;
 }
+
+export interface CreateTaskForm {
+  userId: string;
+  projectId?: string;
+  title: string;
+  description?: string;
+  dueDate: string;
+  priority?: "LOW" | "MEDIUM" | "HIGH";
+}
