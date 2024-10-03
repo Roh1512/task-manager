@@ -56,5 +56,6 @@ export interface CreateTaskForm {
   title: string;
   description?: string;
   dueDate: string;
+  fromDate?: string;
   priority?: "LOW" | "MEDIUM" | "HIGH";
 }

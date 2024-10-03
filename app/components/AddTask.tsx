@@ -6,21 +6,39 @@ export const AddTaskForm = () => {
   const [more, setMore] = useState<boolean>(false);
   const fetcher = useFetcher();
   return (
-    <>
-      <h2>Add Task</h2>
-      <fetcher.Form className={styles.addTaskForm}>
+    <div className={styles.addTaskContainer}>
+      <fetcher.Form className={styles.addTaskForm} method="post">
         <div className={styles.addTaskInputGroup}>
+          <h2 className="col-span-3 text-center text-2xl font-extrabold">
+            Add Task
+          </h2>
           <input
             type="text"
             name="title"
             id="title"
             placeholder="Enter task"
-            className="col-span-2"
+            className="col-span-2 max-h-min"
           />
-          <div className="flex flex-col items-center justify-center col-span-1">
-            <label htmlFor="dueDate"> Due Date:</label>
+          <div
+            className={`flex flex-col items-center justify-center col-span-1`}
+          >
+            <div>
+              <label htmlFor="fromDate" className={`${styles.dateTimeLabel}`}>
+                From Date
+              </label>
+              <input
+                type="datetime-local"
+                name="fromDate"
+                id="fromDate"
+                placeholder="Due date"
+              />
+            </div>
+            <label htmlFor="dueDate" className={`${styles.dateTimeLabel}`}>
+              {" "}
+              Due Date:
+            </label>
             <input
-              type="date"
+              type="datetime-local"
               name="dueDate"
               id="dueDate"
               placeholder="Due date"
@@ -33,12 +51,16 @@ export const AddTaskForm = () => {
                 name="description"
                 id="description"
                 placeholder="Add a description"
-                className="col-span-3 w-full max-w-full"
+                className="col-span-4 w-full max-w-full"
               />
-              <div className="flex">
-                <label htmlFor="cars">Priority: </label>
+              <div className="flex items-center justify-center gap-3">
+                <label htmlFor="priority">Priority: </label>
 
-                <select name="priority" id="priority">
+                <select
+                  name="priority"
+                  id="priority"
+                  className="p-2 border-white border-2 bg-black text-white"
+                >
                   <option value="LOW">LOW</option>
                   <option value="MEDIUM">MEDIUM</option>
                   <option value="HIGH">HIGH</option>
@@ -47,13 +69,18 @@ export const AddTaskForm = () => {
             </>
           )}
         </div>
-        <button className={styles.addTaskBtn}>
+        <button
+          type="submit"
+          name="_action"
+          value="add_task"
+          className={styles.addTaskBtn}
+        >
           <i className="ri-add-large-fill"></i>
         </button>
       </fetcher.Form>
       <button onClick={() => setMore((prev) => !prev)}>
         {more ? "Hide" : "More"}
       </button>
-    </>
+    </div>
   );
 };
