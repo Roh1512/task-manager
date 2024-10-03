@@ -24,7 +24,7 @@
   display: none;
 }
 .projectLink {
-  background-color: var(--linkbtn-bg);
+  border-bottom: 2px solid var(--linkbtn-bg);
   color: var(--linkbtn-color);
   width: 100%; /* Full width of the container */
   padding: 1rem;
@@ -75,6 +75,10 @@
   display: flex;
   min-height: 80vh;
   max-height: 80vh;
+  border-radius: 20px;
+  background-color: var(--body-bg);
+  margin-left: 1rem;
+  margin-right: 1rem;
   flex-direction: column;
   align-items: center;
   overflow-y: scroll;
@@ -124,6 +128,7 @@
     position: absolute;
     height: 100%;
     overflow-y: scroll;
+    margin: 0;
   }
   .projectsCloseBtn {
     display: block;

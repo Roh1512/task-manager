@@ -230,11 +230,11 @@ export default function Dashboard() {
                   : isActive
                   ? styles.projectLinkActive
                   : ""
-              }`
+              } max-w-fit`
             }
             onClick={() => setShowProjects(false)}
           >
-            Home
+            <i className="ri-home-7-fill"></i>
           </NavLink>
           {/* Render project links */}
           <h2 className="text-3xl font-bold">Projects</h2>

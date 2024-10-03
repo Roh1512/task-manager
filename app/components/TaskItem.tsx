@@ -6,29 +6,48 @@ import { useEffect, useState } from "react";
 
 export const TaskItem = ({ task }: { task: Task }) => {
   const fetcher = useFetcher();
-  const [isExpired, setIsExpired] = useState(false);
+  const [isExpired, setIsExpired] = useState<boolean>(false);
 
   const deleteLoading =
     fetcher.state === "submitting" &&
     fetcher.formData?.get("_action") === "delete_task" &&
     fetcher.formData?.get("taskId") === task.id;
 
+  // Check if the task has expired every second
   useEffect(() => {
-    // Check if the task has expired every second
     const checkTaskExpiry = () => {
-      if (task.dueDate) {
+      if (task.dueDate && task.status !== "EXPIRED") {
         const dueDate = new Date(task.dueDate);
         const now = new Date();
-        setIsExpired(isAfter(dueDate, now) ? false : true); // Updates the expiration status
+        setIsExpired(isAfter(now, dueDate) && true); // Updates the expiration status
+      } else if (task.status === "EXPIRED") {
+        setIsExpired(true);
       }
     };
+
     const interval = setInterval(() => {
       checkTaskExpiry();
     }, 1000);
 
-    // Clear the interval when the component is unmounted
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(interval); // Clear the interval when the component is unmounted
+  }, [task.dueDate, task.status]);
+
+  // Automatically update task status to "EXPIRED" when isExpired becomes true
+  useEffect(() => {
+    if (isExpired && task.status !== "EXPIRED" && fetcher.state === "idle") {
+      // Trigger the status update only once when the task has expired and not already updated
+      fetcher.submit(
+        {
+          taskId: task.id,
+          taskStatus: "EXPIRED",
+          _action: "update_task_expired",
+        },
+        {
+          method: "POST",
+        }
+      );
+    }
+  }, [isExpired, task.id, task.status, fetcher]);
 
   return (
     <div className="flex w-full items-center justify-between mb-2 max-w-2xl bg-slate-900 text-white rounded-lg">
@@ -58,7 +77,9 @@ export const TaskItem = ({ task }: { task: Task }) => {
         {isExpired ? (
           <p className="text-red-700">Task expired</p>
         ) : (
-          <p className="text-green-500">On track</p>
+          <p className="text-green-500">
+            On track <span>{String(isExpired)}</span>
+          </p>
         )}
 
         <p className={`${task.status === "EXPIRED" && "text-red-700"}`}>

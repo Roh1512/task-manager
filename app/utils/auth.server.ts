@@ -115,3 +115,61 @@ export const isLoggedIn = async (request: Request) => {
   }
   return false;
 };
+
+export const deleteAccount = async (
+  userId: string,
+  password: string,
+  request: Request
+) => {
+  try {
+    // Start the transaction for deleting tasks, projects, and user
+    const userAccount = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!userAccount) {
+      const session = await getUserSession(request);
+      return redirect("/login", {
+        headers: {
+          "Set-Cookie": await destroySession(session),
+        },
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, userAccount.password);
+
+    if (!passwordMatch) {
+      return json({ error: "Incorrect password" }, { status: 400 });
+    }
+    await prisma.$transaction(async (tx) => {
+      await tx.task.deleteMany({
+        where: {
+          userId: userId,
+        },
+      });
+      await tx.project.deleteMany({
+        where: {
+          userId: userId,
+        },
+      });
+      await tx.user.delete({
+        where: {
+          id: userId,
+        },
+      });
+    });
+
+    // If the deletion is successful, log out the user
+    const session = await getUserSession(request);
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await destroySession(session),
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting user account:", error);
+    return json({ error: "Failed" }, { status: 500 });
+  }
+};

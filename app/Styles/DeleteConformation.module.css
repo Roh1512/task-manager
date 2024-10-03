@@ -1,0 +1,61 @@
+/* Animation for fade-in and fade-out */
+@keyframes popIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes popOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* Apply pop-in and pop-out animations */
+.fullScreenContainer {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.387);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.contentContainer {
+  background-color: var(--body-bg);
+  border-radius: 20px;
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  font-size: 2rem;
+  animation: popIn 200ms ease-in-out; /* Animation when mounted */
+}
+
+.btnContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* Animation for pop-out (we'll add this with a state class) */
+.exit {
+  animation: popOut 200ms ease-in-out;
+}

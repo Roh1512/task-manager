@@ -13,6 +13,7 @@ import {
   createTask,
   deleteTaskById,
   getTasksWithoutProject,
+  markExpired,
   toggleTaskStatus,
 } from "~/utils/tasks.server";
 import { CreateTaskForm } from "~/utils/types.server";
@@ -67,6 +68,11 @@ export const action: ActionFunction = async ({ request }) => {
         const taskId = formValues.taskId as string;
         const deleteDTask = await deleteTaskById(taskId);
         return json({ deleteDTask });
+      }
+      case "update_task_expired": {
+        const taskId = formValues.taskId as string;
+        const updatedTask = await markExpired(taskId);
+        return updatedTask;
       }
       case "update_task_status": {
         const taskId = formValues.taskId as string;

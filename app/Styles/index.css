@@ -1,9 +1,9 @@
 @import "remixicon/fonts/remixicon.css";
 
 :root {
-  font-size: 18px;
+  font-size: 16px;
   --primary-bg: rgb(170, 155, 155);
-  --accent-bg: white;
+  --accent-bg: #e3e3e3d2;
   --accent-color: black;
   --body-bg: white;
   --body-color: black;
@@ -26,10 +26,6 @@
   box-sizing: border-box;
 }
 
-*:focus {
-  border: 2px solid rgb(142, 0, 0);
-}
-
 .dark,
 [data-theme="dark"] {
   color-scheme: dark;
@@ -40,42 +36,42 @@
   color-scheme: light;
 }
 
-[data-theme="dark"] {
-  background-color: #000;
-  color: white;
-  --body-bg: rgb(26, 28, 35);
-  --body-color: rgb(181, 181, 181);
-  --primary-bg: rgb(13, 17, 20);
-  --primary-color: rgb(211, 211, 211);
-  --accent-bg: rgb(0, 0, 0);
-  --accent-color: white;
-  --secondary: blue;
-  --spinner1: #29dd0a;
-  --linkbtn-bg: rgb(41, 39, 39);
-  --linkbtn-color: rgb(247, 247, 247);
-  --linkbtn-bg-active: rgb(5, 78, 22);
-  --linkbtn-color-active: rgb(249, 249, 249);
-  --linkbtn-bg-pending: rgba(41, 39, 39, 0.556);
-  --linkbtn-color-pending: rgba(249, 249, 249, 0.507);
-  transition: background-color 20ms ease;
-}
-
 [data-theme="light"] {
   background-color: #f2f2f2;
   color: black;
   --body-bg: white;
   --body-color: black;
-  --primary-bg: rgb(211, 211, 211);
+  --primary-bg: rgba(229, 229, 229, 0.386);
   --primary-color: rgb(116, 116, 116);
-  --accent-bg: rgb(217, 216, 205);
-  --accent-color: black;
+  --accent-bg: #e3e3e3;
+  --accent-color: rgb(0, 0, 0);
   --secondary: rgb(0, 153, 255);
-  --linkbtn-bg: rgb(183, 176, 172);
-  --linkbtn-color: rgb(7, 7, 7);
-  --linkbtn-bg-active: rgb(7, 79, 0);
-  --linkbtn-color-active: rgb(255, 255, 255);
+  --linkbtn-bg: #e3e3e3;
+  --linkbtn-color: rgb(3, 3, 3);
+  --linkbtn-bg-active: rgb(194, 194, 194);
+  --linkbtn-color-active: rgb(0, 0, 0);
   --linkbtn-bg-pending: rgba(183, 176, 172, 0.704);
   --linkbtn-color-pending: rgba(35, 35, 35, 0.704);
+  transition: background-color 20ms ease;
+}
+
+[data-theme="dark"] {
+  background-color: #000;
+  color: white;
+  --body-bg: rgb(25, 26, 33);
+  --body-color: rgb(241, 241, 241);
+  --primary-bg: rgb(13, 17, 20);
+  --primary-color: rgb(237, 234, 234);
+  --accent-bg: rgb(0, 0, 0);
+  --accent-color: white;
+  --secondary: blue;
+  --spinner1: #29dd0a;
+  --linkbtn-bg: rgb(25, 26, 33);
+  --linkbtn-color: rgb(247, 247, 247);
+  --linkbtn-bg-active: rgb(0, 54, 9);
+  --linkbtn-color-active: rgb(249, 249, 249);
+  --linkbtn-bg-pending: rgba(41, 39, 39, 0.556);
+  --linkbtn-color-pending: rgba(249, 249, 249, 0.507);
   transition: background-color 20ms ease;
 }
 
@@ -91,17 +87,13 @@
   transition: background-color 20ms ease;
 }
 
-html {
-  background-color: var(--body-bg);
-}
-
 body {
   max-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: var(--body-bg);
+  background-color: var(--accent-bg);
   color: var(--body-color);
   transition: all 200ms;
 }
@@ -109,6 +101,7 @@ body {
 main {
   flex: 1;
   height: 80vh;
+  background-color: var(--accent-bg);
 }
 
 header {
@@ -310,10 +303,10 @@ button:disabled {
 input {
   font-size: 1.2rem;
   padding: 10px 5px;
-  border-radius: 5px;
+  border-radius: 10px;
   max-width: 40rem;
   width: 100%;
-  border: 1.5px solid var(--body-color);
+  border: 1px solid var(--body-color);
   background-color: var(--primary-bg);
   outline: none;
   transition: all 200ms;
@@ -328,8 +321,9 @@ input:focus {
   outline: 1px solid var(--secondary);
   border: 1px solid var(--secondary);
 }
-input:valid {
-  background-color: rgba(0, 137, 0, 0.134);
+input:focus {
+  outline: 2px solid #0e5f00;
+  border: 1px solid green;
 }
 input:invalid {
   background-color: rgba(255, 0, 0, 0.2);
@@ -347,7 +341,11 @@ input:invalid {
   font-size: 1.5rem;
 }
 .authForm {
-  padding: 10px;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 40rem;
+  margin: 0 auto;
+  background-color: var(--body-bg);
 }
 .closeErrorMessageBtn {
   color: rgb(164, 5, 5);
@@ -384,6 +382,7 @@ fieldset {
 .mainDiv {
   height: 80vh;
   overflow-y: scroll;
+  background-color: var(--accent-bg);
 }
 .profileLink {
   color: var(--body-color);

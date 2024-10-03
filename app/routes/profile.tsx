@@ -14,11 +14,17 @@ import { useEffect, useState } from "react";
 import { BackButton } from "~/components/BackButton";
 import { InputElement } from "~/components/InputElement";
 import LogoutButton from "~/components/LogoutButton";
-import { getUser, isLoggedIn, requireUserId } from "~/utils/auth.server";
+import {
+  deleteAccount,
+  getUser,
+  isLoggedIn,
+  requireUserId,
+} from "~/utils/auth.server";
 import { validateEditProfileForm } from "~/utils/formValidation.server";
 import { editProfileDetails } from "~/utils/user.server";
 import type { EditProfileForm } from "~/utils/types.server";
 import { PageLoader } from "~/components/PageLoader";
+import { DeleteConformation } from "~/components/DeleteConfirmation";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const loggedIn = await isLoggedIn(request);
@@ -37,25 +43,39 @@ export const loader: LoaderFunction = async ({ request }) => {
 export const action: ActionFunction = async ({ request }) => {
   try {
     const formData = await request.formData();
-    const formValues = Object.fromEntries(formData);
-    const user: EditProfileForm = {
-      email: formValues.email as string,
-      username: formValues.username as string,
-      firstName: formValues.firstName as string,
-      lastName: formValues.lastName as string,
-      password: formValues.password as string,
-      newPassword: formValues.newPassword as string,
-    };
-
-    const validationErrors = await validateEditProfileForm(user);
-    if (validationErrors) {
-      return json({ errors: validationErrors });
-    }
+    const { _action, ...formValues } = Object.fromEntries(formData);
     const userId = await requireUserId(request);
-    const updatedUserInfo = await editProfileDetails(userId, user);
-    console.log(updatedUserInfo);
 
-    return json(updatedUserInfo);
+    switch (_action) {
+      case "update_profile": {
+        const user: EditProfileForm = {
+          email: formValues.email as string,
+          username: formValues.username as string,
+          firstName: formValues.firstName as string,
+          lastName: formValues.lastName as string,
+          password: formValues.password as string,
+          newPassword: formValues.newPassword as string,
+        };
+
+        const validationErrors = await validateEditProfileForm(user);
+        if (validationErrors) {
+          return json({ errors: validationErrors });
+        }
+        const updatedUserInfo = await editProfileDetails(userId, user);
+        console.log(updatedUserInfo);
+
+        return json(updatedUserInfo);
+      }
+      case "delete_profile": {
+        const password = formValues.password as string;
+        const deletedProfile = await deleteAccount(userId, password, request);
+        console.log("Deleted Profile and data: ", deletedProfile);
+        return deletedProfile;
+      }
+      default: {
+        return redirect("/profile");
+      }
+    }
   } catch (error) {
     console.error("Unexpected error in edit profile action:", error);
     return json({ error: "An unexpected error occurred" }, { status: 500 });
@@ -67,10 +87,15 @@ export default function Profile() {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const [edit, setEdit] = useState<boolean>(false);
+  const [showDelete, setShowDelete] = useState<boolean>(false);
   const loadingPage = navigation.state === "loading" && !navigation.formData;
   const [changePassword, setChangePassword] = useState<boolean>(false);
-  const loadingSubmitButton = navigation.state === "submitting";
+  const loadingSubmitButton =
+    navigation.state === "submitting" &&
+    navigation.formData?.get("_action") === "update_profile";
   console.log(loaderData);
+
+  console.log(actionData?.error);
 
   useEffect(() => {
     if (actionData?.user) {
@@ -81,6 +106,7 @@ export default function Profile() {
 
   return (
     <div className="mainDiv">
+      {showDelete && <DeleteConformation setShowDelete={setShowDelete} />}
       {loadingPage ? (
         <PageLoader />
       ) : (
@@ -121,6 +147,12 @@ export default function Profile() {
                   </p>
                 </div>
                 <LogoutButton />
+                <button
+                  onClick={() => setShowDelete(true)}
+                  className="bg-red-800 text-white rounded-3xl"
+                >
+                  <i className="ri-delete-bin-7-line"></i> Deactivate Profile
+                </button>
               </>
             ) : (
               <Form className="editProfileForm" method="post">
@@ -230,6 +262,8 @@ export default function Profile() {
                   <button
                     type="submit"
                     className="bg-blue-800 text-white w-full"
+                    name="_action"
+                    value="update_profile"
                   >
                     {loadingSubmitButton ? "Saving....." : "Save Changes"}
                   </button>

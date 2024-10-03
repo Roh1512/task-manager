@@ -38,7 +38,7 @@ export const action: ActionFunction = async ({ request }) => {
     console.log("Calling createUser function");
     try {
       const result = await createUser(user);
-      return json({ user: result }, { status: 200 });
+      return result;
     } catch (createUserError) {
       console.error("Error from createUser:", createUserError);
       return json(
@@ -87,7 +87,7 @@ export default function Signup() {
               id="username"
               name="username"
               aria_label="Username"
-              errorMessage={actionData?.errors.username as string}
+              errorMessage={actionData?.errors?.username as string}
               required={true}
             />
           </div>
@@ -97,7 +97,7 @@ export default function Signup() {
             id="email"
             name="email"
             aria_label="Email"
-            errorMessage={actionData?.errors.email as string}
+            errorMessage={actionData?.errors?.email as string}
             required={true}
           />
           <InputElement
@@ -106,7 +106,7 @@ export default function Signup() {
             id="password"
             name="password"
             aria_label="Password"
-            errorMessage={actionData?.errors.password as string}
+            errorMessage={actionData?.errors?.password as string}
             required={true}
           />
           <InputElement
@@ -115,7 +115,7 @@ export default function Signup() {
             id="firstName"
             name="firstName"
             aria_label="First name"
-            errorMessage={actionData?.errors.firstName as string}
+            errorMessage={actionData?.errors?.firstName as string}
             required={true}
           />
           <InputElement
@@ -124,7 +124,7 @@ export default function Signup() {
             id="lastName"
             name="lastName"
             aria_label="Last name"
-            errorMessage={actionData?.errors.lastName as string}
+            errorMessage={actionData?.errors?.lastName as string}
             required={true}
           />
           <button

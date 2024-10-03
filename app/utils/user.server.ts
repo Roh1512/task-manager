@@ -1,6 +1,8 @@
 import { prisma } from "~/utils/prisma.server";
 import type { SignupForm, EditProfileForm } from "./types.server";
 import bcrypt from "bcryptjs";
+import { json } from "@remix-run/node";
+import { createUserSession } from "./auth.server";
 
 export const createUser = async (user: SignupForm) => {
   try {
@@ -12,14 +14,14 @@ export const createUser = async (user: SignupForm) => {
       hashedPassword = await bcrypt.hash(user.password, salt);
     } catch (bcryptError) {
       console.error("Error in bcrypt operations:", bcryptError);
-      throw new Error("Failed to hash password");
+      return json({ error: "Cannot save data" }, { status: 500 });
     }
     const usernameExists = await prisma.user.findUnique({
       where: { username: user.username },
     });
     if (usernameExists) {
       console.log("Username already exists");
-      throw new Error("Username already exists.");
+      return json({ error: "Username already exists" }, { status: 400 });
     }
 
     const emailExists = await prisma.user.findUnique({
@@ -27,7 +29,7 @@ export const createUser = async (user: SignupForm) => {
     });
     if (emailExists) {
       console.log("Email already exists");
-      throw new Error("Email already exists.");
+      return json({ error: "Email already exists" }, { status: 400 });
     }
 
     const newUser = await prisma.user.create({
@@ -42,7 +44,7 @@ export const createUser = async (user: SignupForm) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...sanitizedUserInfo } = newUser;
-    return sanitizedUserInfo;
+    return createUserSession(sanitizedUserInfo.id, "/dashboard");
   } catch (error) {
     console.error("Error in createUser:", error);
     throw error;
@@ -71,7 +73,7 @@ export const editProfileDetails = async (
     console.log(passwordMatch);
 
     if (!passwordMatch) {
-      return { error: "Incorrect Password" };
+      return json({ error: "Incorrect Password" }, { status: 400 });
     }
     const saltRounds = Number(process.env.PW_HASH) || 10;
     const salt = await bcrypt.genSalt(saltRounds);

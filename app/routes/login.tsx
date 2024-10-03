@@ -55,8 +55,8 @@ export default function Login() {
   return (
     <div className="mainDiv">
       <BackButton />
-      <h1>Login</h1>
       <Form method="post" autoComplete="off" className="authForm">
+        <h1>Login</h1>
         <fieldset className="formFields" disabled={isSubmitting}>
           <InputElement
             type="email"
