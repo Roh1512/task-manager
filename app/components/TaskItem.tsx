@@ -3,6 +3,7 @@ import { useFetcher } from "@remix-run/react";
 import { ButtonLoader } from "./ButtonLoader";
 import { format, isAfter } from "date-fns";
 import { useEffect, useState } from "react";
+import styles from "../Styles/TaskItem.module.css";
 
 export const TaskItem = ({ task }: { task: Task }) => {
   const fetcher = useFetcher();
@@ -19,7 +20,7 @@ export const TaskItem = ({ task }: { task: Task }) => {
       if (task.dueDate && task.status !== "EXPIRED") {
         const dueDate = new Date(task.dueDate);
         const now = new Date();
-        setIsExpired(isAfter(now, dueDate) && true); // Updates the expiration status
+        setIsExpired(isAfter(now, dueDate) ? true : false); // Updates the expiration status
       } else if (task.status === "EXPIRED") {
         setIsExpired(true);
       }
@@ -50,66 +51,87 @@ export const TaskItem = ({ task }: { task: Task }) => {
   }, [isExpired, task.id, task.status, fetcher]);
 
   return (
-    <div className="flex w-full items-center justify-between mb-2 max-w-2xl bg-slate-900 text-white rounded-lg">
-      <div className="w-full flex flex-col items-center justify-center">
-        {task.status === "COMPLETE" ? (
-          <p>
-            <del>{task.title}</del>
-          </p>
-        ) : (
-          <p>{task.title}</p>
-        )}
-        {task.description && <p>{task.description}</p>}
-        {task.fromDate && task.dueDate ? (
-          <p>
-            From <span>{format(new Date(task.fromDate), "PPP p")}</span> to{" "}
-            <span>{format(new Date(task.dueDate), "PPP p")}</span>
-          </p>
-        ) : task.dueDate ? (
-          <p>
-            Due at <span>{format(new Date(task.dueDate), "PPP p")}</span>
-          </p>
-        ) : (
-          <p>No due date</p>
-        )}
+    <div className={styles.taskItemContainer}>
+      <div className="w-full flex items-center justify-evenly">
+        <div>
+          {task.status === "COMPLETE" || task.status === "EXPIRED" ? (
+            <p
+              className={`text-2xl ${
+                task.status === "EXPIRED" && "text-red-800"
+              }`}
+            >
+              <del>{task.title}</del>
+            </p>
+          ) : (
+            <p className="text-2xl">{task.title}</p>
+          )}
+          {task.description &&
+            (task.status === "COMPLETE" || task.status === "EXPIRED" ? (
+              <p
+                className={`text-lg ${
+                  task.status === "EXPIRED" && "text-red-800"
+                }`}
+              >
+                <del>{task?.description}</del>
+              </p>
+            ) : (
+              <p className="text-lg">{task.description}</p>
+            ))}
+        </div>
+        <div>
+          {task.fromDate && task.dueDate ? (
+            <p className="text-sm max-w-40">
+              From <span>{format(new Date(task.fromDate), "PPP p")}</span> to{" "}
+              <span>{format(new Date(task.dueDate), "PPP p")}</span>
+            </p>
+          ) : task.dueDate ? (
+            <p className="text-sm">
+              Due at <span>{format(new Date(task.dueDate), "PPP p")}</span>
+            </p>
+          ) : (
+            <p className="text-sm">No due date</p>
+          )}
 
-        {/* Dynamically display if the task has expired */}
-        {isExpired ? (
-          <p className="text-red-700">Task expired</p>
-        ) : (
-          <p className="text-green-500">
-            On track <span>{String(isExpired)}</span>
-          </p>
-        )}
+          {/* Dynamically display if the task has expired */}
+          {/* {isExpired ? (
+            <p className="text-red-700">Task expired</p>
+          ) : (
+            <p className="text-green-500">
+              On track <span>{String(isExpired)}</span>
+            </p>
+          )} */}
 
-        <p className={`${task.status === "EXPIRED" && "text-red-700"}`}>
-          {task.status}
-        </p>
+          {/* <p className={`${task.status === "EXPIRED" && "text-red-700"}`}>
+            {task.status}
+          </p> */}
+        </div>
       </div>
       <div className="flex gap-4 items-center justify-center ">
-        <fetcher.Form method="post">
-          <input type="hidden" name="taskId" id="taskId" value={task.id} />
-          <input
-            type="checkbox"
-            name="isCompleted"
-            id={`isCompleted-${task.id}`}
-            checked={task.status === "COMPLETE"}
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-            onChange={() => {
-              fetcher.submit(
-                {
-                  taskId: task.id,
-                  taskStatus:
-                    task.status === "COMPLETE" ? "IN_PROGRESS" : "COMPLETE",
-                  _action: "update_task_status",
-                },
-                {
-                  method: "POST",
-                }
-              );
-            }}
-          />
-        </fetcher.Form>
+        {task.status !== "EXPIRED" && (
+          <fetcher.Form method="post">
+            <input type="hidden" name="taskId" id="taskId" value={task.id} />
+            <input
+              type="checkbox"
+              name="isCompleted"
+              id={`isCompleted-${task.id}`}
+              checked={task.status === "COMPLETE"}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+              onChange={() => {
+                fetcher.submit(
+                  {
+                    taskId: task.id,
+                    taskStatus:
+                      task.status === "COMPLETE" ? "IN_PROGRESS" : "COMPLETE",
+                    _action: "update_task_status",
+                  },
+                  {
+                    method: "POST",
+                  }
+                );
+              }}
+            />
+          </fetcher.Form>
+        )}
         <fetcher.Form method="post">
           <input type="hidden" name="taskId" id="taskId" value={task.id} />
           <button

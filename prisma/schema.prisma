@@ -43,7 +43,7 @@ model Task {
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  dueDate     DateTime
+  dueDate     DateTime?
   fromDate    DateTime?
   priority    Priority? @default(LOW)
   status      Status    @default(IN_PROGRESS)

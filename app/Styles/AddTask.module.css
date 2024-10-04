@@ -1,18 +1,25 @@
+.addTaskDisplayBtn {
+  @apply flex items-center justify-center gap-2 bg-green-800 text-white;
+}
 .addTaskContainer {
-  @apply flex flex-col items-center justify-center w-full;
+  @apply flex flex-col items-center justify-center w-full h-full fixed top-0 left-0;
+  z-index: 1000;
 }
 .addTaskForm {
-  @apply flex w-full justify-center items-center gap-4 p-4;
+  @apply flex flex-col w-fit justify-center items-center gap-4 p-4 rounded-3xl shadow-gray-900 shadow-2xl;
+  background-color: var(--popup-bg);
   transition: max-height 200ms;
 }
+.closeBtn {
+  align-self: last baseline;
+  background: transparent;
+  color: rgb(144, 1, 1);
+}
 .addTaskInputGroup {
-  @apply grid grid-cols-3 gap-1;
+  @apply grid grid-cols-4 gap-4;
 }
 .addTaskBtn {
   @apply flex items-center justify-center gap-2 bg-green-800 text-white;
-}
-.dateTimeLabel {
-  display: none;
 }
 .dateTimeInput {
   color: transparent;
@@ -35,8 +42,5 @@
   .addTaskBtn::before {
     content: "Add Task";
     font-size: 2rem;
-  }
-  .dateTimeLabel {
-    display: flex;
   }
 }

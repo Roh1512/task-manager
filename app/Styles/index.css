@@ -52,6 +52,10 @@
   --linkbtn-color-active: rgb(0, 0, 0);
   --linkbtn-bg-pending: rgba(183, 176, 172, 0.704);
   --linkbtn-color-pending: rgba(35, 35, 35, 0.704);
+  --popup-bg: rgb(179, 189, 195);
+  --popup-color: black;
+  --task-bg: rgb(214, 228, 216);
+  --task-color: rgb(6, 6, 6);
   transition: background-color 20ms ease;
 }
 
@@ -66,12 +70,16 @@
   --accent-color: white;
   --secondary: blue;
   --spinner1: #29dd0a;
-  --linkbtn-bg: rgb(25, 26, 33);
+  --linkbtn-bg: rgb(0, 0, 0);
   --linkbtn-color: rgb(247, 247, 247);
-  --linkbtn-bg-active: rgb(0, 54, 9);
+  --linkbtn-bg-active: rgb(48, 1, 1);
   --linkbtn-color-active: rgb(249, 249, 249);
   --linkbtn-bg-pending: rgba(41, 39, 39, 0.556);
-  --linkbtn-color-pending: rgba(249, 249, 249, 0.507);
+  --linkbtn-color-pending: rgba(54, 54, 54, 0.733);
+  --popup-bg: rgb(42, 46, 47);
+  --popup-color: black;
+  --task-bg: black;
+  --task-color: white;
   transition: background-color 20ms ease;
 }
 

@@ -5,11 +5,13 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useNavigation } from "@remix-run/react";
 import { AddTaskForm } from "~/components/AddTask";
+import { PageLoader } from "~/components/PageLoader";
 import { TaskItem } from "~/components/TaskItem";
 import { isLoggedIn, requireUserId } from "~/utils/auth.server";
 import {
+  countTasks,
   createTask,
   deleteTaskById,
   getTasksWithoutProject,
@@ -23,22 +25,75 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (!loggedIn) {
     return redirect("/login");
   }
-  const tasksWithoutProjects = await getTasksWithoutProject(request);
-  return json({ localTasks: tasksWithoutProjects });
+  const url = new URL(request.url);
+  const page = Number(url.searchParams.get("page")) || 1;
+  const take = 5;
+  const skip = (page - 1) * take;
+  const tasksWithoutProjects = await getTasksWithoutProject(
+    request,
+    skip,
+    take
+  );
+  const totalTasks = await countTasks(request);
+  const totalPages = Math.ceil(Number(totalTasks) / take);
+
+  const hasMore = tasksWithoutProjects.length === take;
+  return json({
+    localTasks: tasksWithoutProjects,
+    page,
+    totalPages,
+    hasMore,
+  });
 };
 
 export default function LocalTasks() {
-  const { localTasks } = useLoaderData<typeof loader>();
+  const { localTasks, page, totalPages, hasMore } =
+    useLoaderData<typeof loader>();
+  const navigation = useNavigation();
+  const loadingState = navigation.state === "loading" && !navigation.formData;
   return (
-    <>
-      <AddTaskForm />
-      <h1>Local Tasks</h1>
-      {localTasks.length > 0 ? (
-        localTasks.map((task: Task) => <TaskItem key={task.id} task={task} />)
+    <div className="w-full flex flex-col items-center justify-between gap-5 min-h-full p-1">
+      {loadingState ? (
+        <PageLoader />
       ) : (
-        <p>No tasks to show</p>
+        <>
+          <div className="w-full flex flex-col items-center justify-center gap-4">
+            <AddTaskForm />
+            <h1>Local Tasks</h1>
+          </div>
+          {localTasks.length > 0 ? (
+            localTasks.map((task: Task) => (
+              <TaskItem key={task.id} task={task} />
+            ))
+          ) : (
+            <p>No tasks to show</p>
+          )}
+          <div className="flex items-center justify-center w-full gap-4 text-lg">
+            {page > 1 && (
+              <Link
+                to={`.?page=${page - 1}`}
+                className="text-inherit border-2 border-slate-500 px-4 py-1 rounded-xl no-underline "
+              >
+                Prev
+              </Link>
+            )}
+            {localTasks.length > 0 && (
+              <p>
+                Page {page} of {totalPages}
+              </p>
+            )}
+            {hasMore && totalPages > page && (
+              <Link
+                to={`.?page=${page + 1}`}
+                className="text-inherit border-2 border-slate-500 px-4 py-1 rounded-xl no-underline"
+              >
+                Next
+              </Link>
+            )}
+          </div>
+        </>
       )}
-    </>
+    </div>
   );
 }
 

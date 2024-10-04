@@ -1,0 +1,7 @@
+.taskItemContainer {
+  @apply flex w-full items-center justify-between mb-2 max-w-2xl rounded-3xl;
+  border-bottom: 2px solid var(--task-bg);
+  box-shadow: 2px 2px 2px var(--task-bg);
+  color: var(--task-color);
+  margin-bottom: 2rem;
+}

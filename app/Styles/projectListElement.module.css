@@ -46,6 +46,7 @@
   margin-top: 0;
   border: none;
   outline: none;
+  background: transparent;
 }
 .projectDeleteBtn:focus {
   background: transparent;

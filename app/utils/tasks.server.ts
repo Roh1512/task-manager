@@ -1,6 +1,8 @@
+import { isAfter } from "date-fns";
 import { requireUserId } from "./auth.server";
 import { prisma } from "./prisma.server";
 import { CreateTaskForm } from "./types.server";
+import { json } from "@remix-run/node";
 
 export const getTasksWithoutProject = async (
   request: Request,
@@ -29,23 +31,25 @@ export const getTasksWithoutProject = async (
 
 export const createTask = async (task: CreateTaskForm) => {
   try {
+    const now = new Date();
+    const expired = isAfter(now, new Date(task.dueDate));
     const newTask = await prisma.task.create({
       data: {
         userId: task.userId,
         projectId: task.projectId || undefined,
         title: task.title,
         description: task.description || undefined,
-        dueDate: new Date(task.dueDate), // Check if dueDate exists
+        dueDate: task.dueDate ? new Date(task.dueDate) : undefined, // Check if dueDate exists
         fromDate: task.fromDate ? new Date(task.fromDate) : undefined, // Check if fromDate exists
         priority: task.priority || "LOW",
-        status: "IN_PROGRESS",
+        status: expired ? "EXPIRED" : "IN_PROGRESS",
         createdAt: new Date(),
       },
     });
     return newTask;
   } catch (error) {
     console.error("Create task error: ", error);
-    throw error;
+    return { error: "Error creating task", status: 500 };
   }
 };
 
@@ -75,7 +79,7 @@ export const toggleTaskStatus = async (
       },
     });
     if (findTask?.status === "EXPIRED") {
-      throw new Error("Task is expired");
+      return json({ error: "Expired" }, { status: 400 });
     }
     const taskEdited = await prisma.task.update({
       where: {
@@ -103,6 +107,7 @@ export const markExpired = async (taskId: string) => {
       },
       data: {
         status: "EXPIRED",
+        updatedAt: new Date(),
       },
     });
     console.log("Expired task: ", taskEdited.title);
@@ -110,5 +115,25 @@ export const markExpired = async (taskId: string) => {
   } catch (error) {
     console.error("Error Changing task status to expired", error);
     throw new Error("Error Changing task status to expired");
+  }
+};
+
+export const countTasks = async (request: Request, projectId?: string) => {
+  const userId = await requireUserId(request);
+  if (projectId) {
+    const count = await prisma.task.count({
+      where: {
+        userId: userId,
+        projectId: projectId,
+      },
+    });
+    return count;
+  } else {
+    const count = await prisma.task.count({
+      where: {
+        userId: userId,
+      },
+    });
+    return count;
   }
 };
