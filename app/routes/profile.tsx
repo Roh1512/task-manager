@@ -25,6 +25,7 @@ import { editProfileDetails } from "~/utils/user.server";
 import type { EditProfileForm } from "~/utils/types.server";
 import { PageLoader } from "~/components/PageLoader";
 import { DeleteConformation } from "~/components/DeleteConfirmation";
+import { formatDistanceToNow } from "date-fns";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const loggedIn = await isLoggedIn(request);
@@ -62,14 +63,12 @@ export const action: ActionFunction = async ({ request }) => {
           return json({ errors: validationErrors });
         }
         const updatedUserInfo = await editProfileDetails(userId, user);
-        console.log(updatedUserInfo);
 
         return json(updatedUserInfo);
       }
       case "delete_profile": {
         const password = formValues.password as string;
         const deletedProfile = await deleteAccount(userId, password, request);
-        console.log("Deleted Profile and data: ", deletedProfile);
         return deletedProfile;
       }
       default: {
@@ -93,16 +92,12 @@ export default function Profile() {
   const loadingSubmitButton =
     navigation.state === "submitting" &&
     navigation.formData?.get("_action") === "update_profile";
-  console.log(loaderData);
-
-  console.log(actionData?.error);
 
   useEffect(() => {
     if (actionData?.user) {
       setEdit(false);
     }
   }, [actionData?.user]);
-  console.log(changePassword);
 
   return (
     <div className="mainDiv">
@@ -112,7 +107,7 @@ export default function Profile() {
       ) : (
         <>
           <BackButton disabled={edit ? true : false} />
-          <div className="flex justify-between items-center flex-col p-2 h-fit border-2">
+          <div className="flex justify-between items-center flex-col p-2 h-fit">
             <button
               onClick={() => setEdit(!edit)}
               className={`editButton ${
@@ -133,7 +128,7 @@ export default function Profile() {
             </button>
             {edit === false ? (
               <>
-                <div className="w-full flex flex-col items-center justify-center min-h-60  h-full">
+                <div className="w-full flex flex-col items-center justify-center min-h-60  h-full gap-4">
                   <h2 className="text-3xl font-bold">
                     {loaderData?.firstName + " " + loaderData?.lastName}
                   </h2>
@@ -145,6 +140,18 @@ export default function Profile() {
                     <strong>Email: </strong>
                     {loaderData?.email}
                   </p>
+                  <div>
+                    <p>
+                      <strong>Profile Created</strong>{" "}
+                      {formatDistanceToNow(new Date(loaderData?.createdAt))}{" "}
+                      ago.
+                    </p>
+                    <p>
+                      <strong>Last updated</strong>{" "}
+                      {formatDistanceToNow(new Date(loaderData?.updatedAt))}{" "}
+                      ago.
+                    </p>
+                  </div>
                 </div>
                 <LogoutButton />
                 <button

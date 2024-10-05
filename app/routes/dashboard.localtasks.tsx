@@ -59,7 +59,7 @@ export default function LocalTasks() {
         <>
           <div className="w-full flex flex-col items-center justify-center gap-4">
             <AddTaskForm />
-            <h1>Local Tasks</h1>
+            <h1>All Tasks</h1>
           </div>
           {localTasks.length > 0 ? (
             localTasks.map((task: Task) => (

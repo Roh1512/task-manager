@@ -45,7 +45,7 @@ export const DeleteConformation = ({
 
     return () =>
       document.removeEventListener("keydown", (e) => handleKeyDown(e as any));
-  }, []);
+  }, [handleKeyDown]);
 
   return (
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
@@ -61,7 +61,14 @@ export const DeleteConformation = ({
         <p>Are you sure?</p>
         <fetcher.Form method="post">
           <div className="mb-4">
-            <input type="password" id="password" name="password" required />
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              placeholder="Enter password to continue."
+              aria-label="Enter password to continue"
+            />
             {fetcher?.data?.error && (
               <p className="text-sm text-red-800 text-center mt-1 bg-slate-300">
                 {fetcher.data.error}

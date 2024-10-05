@@ -1,4 +1,5 @@
 import {
+  Link,
   useLoaderData,
   useNavigation,
   useOutletContext,
@@ -18,6 +19,7 @@ import { ProjectDetails } from "~/components/ProjectDetails";
 // import { Project } from "@prisma/client";
 import { CreateTaskForm, ProjectType } from "~/utils/types.server";
 import {
+  countTasks,
   createTask,
   deleteTaskById,
   getTasksByProject,
@@ -58,17 +60,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     take,
     projectId as string
   );
-  /*  // Check if the projectId exists
-  if (!tasksData[projectId]) {
-    throw new Response("Project not found", { status: 404 });
-  }
-
-  const tasks = tasksData[projectId]; */
-  return json({ project, tasks });
+  const totalTasks = await countTasks(request, projectId);
+  const totalPages = Math.ceil(Number(totalTasks) / take);
+  const hasMore = tasks.length === take;
+  return json({ project, tasks, page, totalPages, hasMore });
 };
 
 export default function ProjectTasks() {
-  const { project, tasks } = useLoaderData<typeof loader>();
+  const { project, tasks, page, totalPages, hasMore } =
+    useLoaderData<typeof loader>();
   const navigation = useNavigation();
   // Convert date strings back to Date objects
   const parsedTasks = tasks.map((task) => ({
@@ -94,15 +94,41 @@ export default function ProjectTasks() {
         <ProjectDetails project={project} setProjects={setProjects} />
       </div>
       <div className={styles.tasksPage}>
-        <h2>Tasks</h2>
-        <AddTaskForm projectId={project.id as string} />
-        {parsedTasks.length > 0 ? (
-          parsedTasks.map((task: Task) => (
-            <TaskItem key={task.id} task={task} />
-          ))
-        ) : (
-          <p>No tasks to show</p>
-        )}
+        <div className="text-center my-3">
+          <AddTaskForm projectId={project.id as string} />
+        </div>
+        <div className="w-full flex flex-col items-center justify-center">
+          {parsedTasks.length > 0 ? (
+            parsedTasks.map((task: Task) => (
+              <TaskItem key={task.id} task={task} />
+            ))
+          ) : (
+            <p>No tasks to show</p>
+          )}
+        </div>
+        <div className="flex items-center justify-center w-full gap-4 text-lg pb-4">
+          {page > 1 && (
+            <Link
+              to={`.?page=${page - 1}`}
+              className="text-inherit border-2 border-slate-500 px-4 py-1 rounded-xl no-underline "
+            >
+              Prev
+            </Link>
+          )}
+          {tasks.length > 0 && (
+            <p>
+              Page {page} of {totalPages}
+            </p>
+          )}
+          {hasMore && totalPages > page && (
+            <Link
+              to={`.?page=${page + 1}`}
+              className="text-inherit border-2 border-slate-500 px-4 py-1 rounded-xl no-underline"
+            >
+              Next
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

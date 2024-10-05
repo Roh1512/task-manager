@@ -85,7 +85,7 @@ export const validateEditProfileForm = async (user: EditProfileForm) => {
   if (user.password.length < 5) {
     errors.password = "Password should be atleast 5 characters long.";
   }
-  if (!user.newPassword || user.newPassword?.length < 5) {
+  if (user.newPassword && user.newPassword?.length < 5) {
     errors.newPassword = "Password should be atleast 5 characters long.";
   }
   if (Object.keys(errors).length <= 0) {

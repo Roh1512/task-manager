@@ -8,6 +8,7 @@ export const AddTaskForm = ({ projectId }: { projectId?: string }) => {
   const [isClosing, setIsClosing] = useState<boolean>(false); // New state to manage closing animation
   const [fromDate, setFromDate] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fetcher = useFetcher();
   const taskAddLoader =
@@ -32,6 +33,13 @@ export const AddTaskForm = ({ projectId }: { projectId?: string }) => {
       inputRef.current.focus();
     }
   }, [show]);
+
+  useEffect(() => {
+    if (!taskAddLoader) {
+      formRef.current?.reset();
+      inputRef.current?.focus();
+    }
+  }, [taskAddLoader]);
 
   // Effect to close modal after animation
   useEffect(() => {
@@ -64,6 +72,7 @@ export const AddTaskForm = ({ projectId }: { projectId?: string }) => {
           <fetcher.Form
             className={styles.addTaskForm}
             method="post"
+            ref={formRef}
             action={
               projectId
                 ? `/dashboard/projects/${projectId}`
