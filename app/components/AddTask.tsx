@@ -3,8 +3,11 @@ import styles from "../Styles/AddTask.module.css";
 import { useEffect, useRef, useState } from "react";
 import { ButtonLoader } from "./ButtonLoader";
 
-export const AddTaskForm = () => {
+export const AddTaskForm = ({ projectId }: { projectId?: string }) => {
   const [show, setShow] = useState<boolean>(false);
+  const [isClosing, setIsClosing] = useState<boolean>(false); // New state to manage closing animation
+  const [fromDate, setFromDate] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const fetcher = useFetcher();
   const taskAddLoader =
@@ -13,28 +16,33 @@ export const AddTaskForm = () => {
 
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!taskAddLoader && e.target === e.currentTarget) {
-      setShow(false); // Close modal
+      setIsClosing(true); // Trigger closing animation
     }
   };
+
   const handleClose = () => {
     if (!taskAddLoader) {
-      setShow(false);
+      setIsClosing(true); // Trigger closing animation
     }
   };
+
+  // Effect to focus the input when the modal opens
   useEffect(() => {
     if (show && inputRef.current) {
       inputRef.current.focus();
     }
   }, [show]);
 
+  // Effect to close modal after animation
   useEffect(() => {
-    if (
-      fetcher.state === "loading" &&
-      fetcher.formData?.get("_action") === "add_task"
-    ) {
-      setShow(false);
+    if (isClosing) {
+      const timeout = setTimeout(() => {
+        setShow(false); // Close the modal after the animation ends
+        setIsClosing(false); // Reset the closing state
+      }, 200); // corresponds to the animation duration
+      return () => clearTimeout(timeout);
     }
-  }, [fetcher.state, fetcher.formData]);
+  }, [isClosing]);
 
   return (
     <>
@@ -48,13 +56,19 @@ export const AddTaskForm = () => {
       {show && (
         // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
         <div
-          className={`${styles.addTaskContainer}`}
+          className={`${styles.addTaskContainer} ${
+            isClosing ? styles.fadeOut : styles.fadeIn
+          }`} // Apply the animation class conditionally
           onClick={handleOutsideClick}
         >
           <fetcher.Form
             className={styles.addTaskForm}
             method="post"
-            action="/dashboard/localtasks"
+            action={
+              projectId
+                ? `/dashboard/projects/${projectId}`
+                : "/dashboard/localtasks"
+            }
           >
             <button
               className={styles.closeBtn}
@@ -66,6 +80,9 @@ export const AddTaskForm = () => {
               <i className="ri-close-large-line" aria-hidden></i>
             </button>
             <h2 className="text-center text-2xl font-extrabold">Add Task</h2>
+            {projectId && (
+              <input type="hidden" name="projectId" value={projectId} />
+            )}
             <div className={styles.addTaskInputGroup}>
               <input
                 type="text"
@@ -76,7 +93,7 @@ export const AddTaskForm = () => {
                 aria-label="Enter task"
                 ref={inputRef}
               />
-              <div className="col-span-2 flex items-center justify-center">
+              <div className="col-span-2 flex items-center justify-center gap-3">
                 <label htmlFor="fromDate" className={`${styles.dateTimeLabel}`}>
                   From Date
                 </label>
@@ -86,9 +103,13 @@ export const AddTaskForm = () => {
                   id="fromDate"
                   placeholder="Due date"
                   aria-label="Select date and time the task starts"
+                  className="max-w-9 cursor-pointer"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
                 />
+                <p>{fromDate ? fromDate : "Not set"}</p>
               </div>
-              <div className="col-span-2 flex items-center justify-center">
+              <div className="col-span-2 flex items-center justify-center gap-4">
                 <label htmlFor="dueDate"> Due Date:</label>
                 <input
                   type="datetime-local"
@@ -96,7 +117,11 @@ export const AddTaskForm = () => {
                   id="dueDate"
                   placeholder="Due date"
                   aria-label="Select data and time the task is due"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="max-w-9 cursor-pointer"
                 />
+                <p>{dueDate ? dueDate : "Not set"}</p>
               </div>
               <input
                 type="text"
@@ -104,7 +129,7 @@ export const AddTaskForm = () => {
                 id="description"
                 placeholder="Add a description"
                 className="col-span-4 w-full max-w-full"
-                aria-label="Add a desctiption for the task"
+                aria-label="Add a description for the task"
               />
               <div className="flex items-center justify-center gap-3">
                 <label htmlFor="priority">Priority: </label>

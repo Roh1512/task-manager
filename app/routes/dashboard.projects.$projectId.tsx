@@ -11,12 +11,22 @@ import {
 } from "@remix-run/node";
 import styles from "../Styles/tasksPage.module.css";
 import { ErrorComponent } from "~/components/ErrorComponent";
-import { isLoggedIn } from "~/utils/auth.server";
+import { isLoggedIn, requireUserId } from "~/utils/auth.server";
 import { PageLoader } from "~/components/PageLoader";
 import { editProject, getProjectById } from "~/utils/projects.server";
 import { ProjectDetails } from "~/components/ProjectDetails";
 // import { Project } from "@prisma/client";
-import { ProjectType } from "~/utils/types.server";
+import { CreateTaskForm, ProjectType } from "~/utils/types.server";
+import {
+  createTask,
+  deleteTaskById,
+  getTasksByProject,
+  markExpired,
+  toggleTaskStatus,
+} from "~/utils/tasks.server";
+import { TaskItem } from "~/components/TaskItem";
+import { Task } from "@prisma/client";
+import { AddTaskForm } from "~/components/AddTask";
 
 // Dummy tasks data - you should fetch this from your database instead
 /* const tasksData: Record<number, string[]> = {
@@ -33,22 +43,41 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   }
   const projectId = params.projectId;
 
+  const url = new URL(request.url);
+  const page = Number(url.searchParams.get("page")) || 1;
+  const take = 5;
+  const skip = (page - 1) * take;
+
   const project = await getProjectById(projectId as string);
   if (!project) {
     throw new Response("Project not found", { status: 404 });
   }
+  const tasks = await getTasksByProject(
+    request,
+    skip,
+    take,
+    projectId as string
+  );
   /*  // Check if the projectId exists
   if (!tasksData[projectId]) {
     throw new Response("Project not found", { status: 404 });
   }
 
   const tasks = tasksData[projectId]; */
-  return json({ project });
+  return json({ project, tasks });
 };
 
 export default function ProjectTasks() {
-  const { project } = useLoaderData<typeof loader>();
+  const { project, tasks } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
+  // Convert date strings back to Date objects
+  const parsedTasks = tasks.map((task) => ({
+    ...task,
+    createdAt: new Date(task.createdAt),
+    updatedAt: new Date(task.updatedAt),
+    dueDate: task.dueDate ? new Date(task.dueDate) : null,
+    fromDate: task.fromDate ? new Date(task.fromDate) : null,
+  }));
   const {
     setProjects,
   }: { setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>> } =
@@ -60,11 +89,21 @@ export default function ProjectTasks() {
   return pageLoading ? (
     <PageLoader />
   ) : (
-    <div className={styles.tasksPage}>
-      <div>
+    <div className="flex flex-col w-full items-center justify-between min-h-full">
+      <div className={styles.projectDetails}>
         <ProjectDetails project={project} setProjects={setProjects} />
       </div>
-      <h2>Tasks</h2>
+      <div className={styles.tasksPage}>
+        <h2>Tasks</h2>
+        <AddTaskForm projectId={project.id as string} />
+        {parsedTasks.length > 0 ? (
+          parsedTasks.map((task: Task) => (
+            <TaskItem key={task.id} task={task} />
+          ))
+        ) : (
+          <p>No tasks to show</p>
+        )}
+      </div>
     </div>
   );
 }
@@ -78,6 +117,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const formData = await request.formData();
     const { _action, ...formValues } = Object.fromEntries(formData);
     const projectId = params.projectId;
+    const userId = await requireUserId(request);
     switch (_action) {
       case "edit_project": {
         const editedProject = await editProject(
@@ -86,6 +126,38 @@ export const action: ActionFunction = async ({ request, params }) => {
           formValues.description as string
         );
         return json({ editedProject });
+      }
+      case "add_task": {
+        const task: CreateTaskForm = {
+          userId: userId as string,
+          projectId: formValues.projectId as string,
+          title: formValues.title as string,
+          description: formValues.description as string,
+          dueDate: formValues.dueDate as string,
+          fromDate: formValues.fromDate as string,
+          priority: formValues.priority as "LOW" | "MEDIUM" | "HIGH",
+        };
+        const newTask = await createTask(task);
+        return json({ newTask });
+      }
+      case "delete_task": {
+        const taskId = formValues.taskId as string;
+        const deleteDTask = await deleteTaskById(taskId);
+        return json({ deleteDTask });
+      }
+      case "update_task_expired": {
+        const taskId = formValues.taskId as string;
+        const updatedTask = await markExpired(taskId);
+        return updatedTask;
+      }
+      case "update_task_status": {
+        const taskId = formValues.taskId as string;
+        const taskStatus = formValues.taskStatus as
+          | "COMPLETE"
+          | "IN_PROGRESS"
+          | "EXPIRED";
+        const updatedTask = await toggleTaskStatus(taskId, taskStatus);
+        return updatedTask;
       }
       default: {
         return redirect(`/dashboard/projects/${projectId}`);

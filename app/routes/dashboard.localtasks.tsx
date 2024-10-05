@@ -68,7 +68,7 @@ export default function LocalTasks() {
           ) : (
             <p>No tasks to show</p>
           )}
-          <div className="flex items-center justify-center w-full gap-4 text-lg">
+          <div className="flex items-center justify-center w-full gap-4 text-lg pb-4">
             {page > 1 && (
               <Link
                 to={`.?page=${page - 1}`}

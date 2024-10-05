@@ -1,0 +1,65 @@
+.editBtn {
+  background: transparent;
+  margin-left: 90%;
+  color: rgb(153, 100, 1);
+}
+.EditProjectContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.623);
+}
+.closeBtn {
+  justify-self: flex-end;
+  align-self: flex-end;
+  background: transparent;
+  color: rgb(150, 1, 1);
+}
+.editProjectForm {
+  @apply flex flex-col w-fit justify-center items-center gap-4 p-4 rounded-3xl shadow-gray-900 shadow-2xl;
+  background-color: var(--popup-bg);
+  transition: max-height 200ms;
+}
+.inputTitleContainer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.inputTitleContainer > label {
+  text-wrap: nowrap;
+  font-size: 1.5rem;
+}
+.inputTitleContainer > input {
+  padding: 0.2rem;
+}
+.descriptionTextArea {
+  width: 100%;
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 200ms ease-in-out forwards;
+}
+
+.fadeOut {
+  animation: fadeOut 200ms ease-in-out forwards;
+}

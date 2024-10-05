@@ -31,7 +31,6 @@
 @media only screen and (max-width: 600px) {
   .addTaskForm {
     @apply flex-col mt-7 p-2;
-    border: 1px solid red;
   }
   .addTaskInputGroup {
     @apply flex flex-col gap-3;
@@ -43,4 +42,33 @@
     content: "Add Task";
     font-size: 2rem;
   }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 200ms ease-in-out forwards;
+}
+
+.fadeOut {
+  animation: fadeOut 200ms ease-in-out forwards;
 }

@@ -42,7 +42,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const skip = (page - 1) * take;
   const projects = await getProjectsByUser(userId, skip, take);
 
-  return { projects, page, hasMore: projects.length === take };
+  return { projects, page, hasMore: projects?.length === take };
 };
 
 export const action: ActionFunction = async ({ request }) => {

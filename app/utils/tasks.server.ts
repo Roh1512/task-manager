@@ -29,6 +29,33 @@ export const getTasksWithoutProject = async (
   }
 };
 
+export const getTasksByProject = async (
+  request: Request,
+  skip = 0,
+  take = 5,
+  projectId: string
+) => {
+  try {
+    const userId = await requireUserId(request);
+    const tasks = await prisma.task.findMany({
+      where: {
+        userId: userId,
+        projectId: projectId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: skip,
+      take: take,
+    });
+    console.log("Tasks by project fetched: ", tasks);
+    return tasks;
+  } catch (error) {
+    console.error("getTasksWithoutProject error: ", error);
+    throw error;
+  }
+};
+
 export const createTask = async (task: CreateTaskForm) => {
   try {
     const now = new Date();

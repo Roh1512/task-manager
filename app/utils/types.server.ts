@@ -3,8 +3,8 @@ export interface ProjectType {
   title: string;
   description: string | null;
   userId: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface SignupForm {
