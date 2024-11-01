@@ -1,39 +1,12 @@
-.projectDetails {
-  overflow: scroll;
-  transition: max-height 2000ms;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-.projectDetails::-webkit-scrollbar {
-  display: none;
-}
-
 .projectDetailsContainer {
-  background-color: var(--accent-bg);
-  padding-bottom: 4rem;
-  padding-top: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-}
-.collapse {
-  max-height: 20vh;
-  transition: max-height 200ms;
-}
-.expand {
-  max-height: 70vh;
-  transition: max-height 400ms;
-}
-
-.expandBtn {
-  margin-top: -0.5rem;
-  padding: 0 0;
-  height: min-content;
-  background: transparent;
-  border: none;
-  font-size: 1rem;
+  gap: 2rem;
+  background-color: var(--accent-bg);
+  padding-bottom: 1rem;
+  padding-top: 1.5rem;
 }
 
 .projectDetailsContainer p,

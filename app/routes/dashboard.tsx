@@ -186,7 +186,7 @@ export default function Dashboard() {
     navigation.state === "loading" &&
     !navigation.formData &&
     !isNavigatingToProject;
-  // console.log("Loading page dashboard: ", loadingPage);
+  console.log("Loading page dashboard: ", loadingPage);
 
   return loadingPage ? (
     <PageLoader />
@@ -212,7 +212,6 @@ export default function Dashboard() {
           className={`${styles.projectsContainer} ${
             showProjects && styles.showProjectContainer
           }`}
-          aria-hidden={!showProjects}
         >
           <button
             onClick={() => setShowProjects(false)}
@@ -303,7 +302,7 @@ export default function Dashboard() {
               </div>
             </>
           )}
-          <Outlet context={{ projects, setProjects }} />
+          <Outlet context={setProjects} />
         </div>
       </div>
     </>

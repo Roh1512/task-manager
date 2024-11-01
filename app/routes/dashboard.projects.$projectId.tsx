@@ -49,9 +49,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function ProjectTasks() {
   const { project } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
-  const {
-    setProjects,
-  }: { setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>> } =
+  const setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>> =
     useOutletContext();
   console.log(setProjects);
 
